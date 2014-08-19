@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -f /.mysql_db_created ]; then
+if [ -f /app/sites/default/.mysql_db_created ]; then
         exec /run.sh
         exit 1
 fi
@@ -35,8 +35,9 @@ done
 if [[ $DB_CONNECTABLE -eq 0 ]]; then
     DB_EXISTS=$(mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e "SHOW DATABASES LIKE '"$DB_NAME"';" 2>&1 |grep "$DB_NAME" > /dev/null ; echo "$?")
 
-    if [[ DB_EXISTS -eq 1 ]]; then
-cd /app && drush site-install --db-url=mysql://$DB_USER:$DB_PASS@$DB_HOST/$DB_NAME --site-name=default << EOF
+    if [[ DB_EXISTS -eq 1  ]]; then
+cd /app && drush site-install --db-url=mysql://$DB_USER:$DB_PASS@$DB_HOST/$DB_NAME \
+   --site-name=default --account-pass=changeme << EOF
 y
 EOF
         echo "=> Done installing site using drush!"
@@ -48,6 +49,10 @@ else
     exit $DB_CONNECTABLE
 fi
 
-touch /.mysql_db_created
+if [ $EXTRA_SETUP_SCRIPT ]; then
+    . $EXTRA_SETUP_SCRIPT
+fi
+
+touch /app/sites/default/.mysql_db_created
 exec /run.sh
 
