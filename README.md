@@ -1,6 +1,6 @@
 # Drupal image without database
 
-This image contains latest stable Drupal release 7.31
+This image contains latest stable Drupal release of 7.x
 and is build from tutum-php it will automatically setup
 the database on a linked container 
 and install a default site for you.
