@@ -1,0 +1,18 @@
+# This is a sample configuration to run a Drupal-instance with Docker-Compose.
+# For customization options see: https://docs.docker.com/compose/yml/
+
+web:
+  image: samos123/drupal
+  links:
+    - mysql:db
+  volumes:
+    - /app
+  ports:
+    - "80:80"
+
+mysql:
+  image: tutum/mysql:5.6
+  environment:
+    - MYSQL_PASS=password
+  volumes:
+    - /var/lib/mysql

@@ -1,15 +1,16 @@
 #!/bin/bash
 
-if [ -f /app/sites/default/.mysql_db_created ]; then
-        exec /run.sh
-        exit 1
-fi
-
 DB_HOST=${DB_PORT_3306_TCP_ADDR:-${DB_HOST}}
 DB_HOST=${DB_1_PORT_3306_TCP_ADDR:-${DB_HOST}}
 DB_PORT=${DB_PORT_3306_TCP_PORT:-${DB_PORT}}
 DB_PORT=${DB_1_PORT_3306_TCP_PORT:-${DB_PORT}}
 DB_PASS=${DB_ENV_MYSQL_PASS:-${DB_PASS}}
+
+if [ -f /app/sites/default/.mysql_db_created ]; then
+        export DB_HOST DB_PORT DB_PASS
+        exec /run.sh
+        exit 1
+fi
 
 if [ "$DB_PASS" = "**ChangeMe**" ] && [ -n "$DB_1_ENV_MYSQL_PASS" ]; then
     DB_PASS="$DB_1_ENV_MYSQL_PASS"
@@ -56,4 +57,3 @@ fi
 
 touch /app/sites/default/.mysql_db_created
 exec /run.sh
-
