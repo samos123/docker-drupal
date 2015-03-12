@@ -1,37 +1,65 @@
-FROM tutum/apache-php:latest
+FROM php:apache
 MAINTAINER Sam Stoelinga <sammiestoel@gmail.com>
-# Install packages and change apache config
-RUN apt-get update && \
-  apt-get -yq install mysql-client && \
-  rm -rf /var/lib/apt/lists/*
 
-# Copy latest stable version of Drupal from git submodule into /app
-RUN rm -fr /app
-ADD drupal/ /app
-ADD settings.php /app/sites/default/settings.php
-RUN mkdir -p /app/sites/default/files
-RUN chown www-data:www-data /app -R
+ENTRYPOINT ["/entrypoint.sh"]
 
-# Install drush by using composer
-RUN composer self-update && \
-    COMPOSER_BIN_DIR=/usr/bin/ composer global require drush/drush:6.*
-
-
-# Add script to create 'drupal' DB and install default site
-ADD run-drupal.sh /run-drupal.sh
-RUN chmod 755 /run-drupal.sh
+# Provide compatibility for images depending on previous versions
+RUN ln -s /var/www/html /app
 
 # Update apache2 configuration for drupal
 RUN a2enmod rewrite
-ADD apache2-default.conf /etc/apache2/sites-enabled/000-default.conf
 
-# Expose environment variables
-ENV DB_HOST **LinkMe**
-ENV DB_PORT **LinkMe**
-ENV DB_NAME drupal
-ENV DB_USER admin
-ENV DB_PASS **ChangeMe**
+# Install packages
+RUN apt-get -q update \
+ && DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install \
+	file \
+    libfreetype6 \
+    libjpeg62 \
+    libpng12-0 \
+    libx11-6 \
+    libxpm4 \
+    mysql-client
 
-EXPOSE 80
+# Install PHP-extensions
+RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libxpm-dev re2c zlib1g-dev"; \
+    DEBIAN_FRONTEND=noninteractive apt-get -yq --no-install-recommends install $BUILD_DEPS \
+ && docker-php-ext-configure gd \
+        --with-jpeg-dir=/usr/lib/x86_64-linux-gnu --with-png-dir=/usr/lib/x86_64-linux-gnu \
+        --with-xpm-dir=/usr/lib/x86_64-linux-gnu --with-freetype-dir=/usr/lib/x86_64-linux-gnu \
+ && docker-php-ext-install gd mbstring pdo_mysql zip \
+ && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $BUILD_DEPS \
+ && rm -rf /var/lib/apt/lists/* \
+ && pecl install uploadprogress
 
-CMD ["/run-drupal.sh"]
+# Download Drupal from ftp.drupal.org
+ENV DRUPAL_VERSION=7.34
+ENV DRUPAL_TARBALL_MD5=bb4d212e1eb1d7375e41613fbefa04f2
+WORKDIR /var/www
+RUN rm -R html \
+ && curl -OsS http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz \
+ && echo "${DRUPAL_TARBALL_MD5}  drupal-${DRUPAL_VERSION}.tar.gz" | md5sum -c \
+ && tar -xf drupal-${DRUPAL_VERSION}.tar.gz && rm drupal-${DRUPAL_VERSION}.tar.gz \
+ && mv drupal-${DRUPAL_VERSION} html \
+ && cd html \
+ && rm [A-Z]*.txt install.php web.config
+
+# Install composer and drush by using composer
+ENV COMPOSER_BIN_DIR=/usr/local/bin
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
+ && composer global require drush/drush:6.* \
+ && drush cc drush
+
+# Add PHP-settings
+ADD php-conf.d/ $PHP_INI_DIR/conf.d/
+
+# Create private-files volume, copy sites/default's defaults and make it a volume
+RUN mkdir private && chown -R www-data:www-data /var/www
+WORKDIR html
+ADD sites/ sites/
+VOLUME /var/www/html/sites
+VOLUME /var/www/private
+
+# Add entrypoint-script to
+# - create 'drupal' DB and install default site, if necessary
+# - invoke the web server
+ADD entrypoint.sh /
