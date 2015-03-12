@@ -4,7 +4,7 @@
 web:
   image: samos123/drupal
   links:
-    - db:mysql
+    - mysql:db
   volumes:
     - /app
   ports:
