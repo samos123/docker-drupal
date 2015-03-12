@@ -7,7 +7,6 @@ DB_PORT=${DB_1_PORT_3306_TCP_PORT:-${DB_PORT}}
 DB_PASS=${DB_ENV_MYSQL_PASS:-${DB_PASS}}
 
 if [ -f /app/sites/default/.mysql_db_created ]; then
-	echo "DEBUG: " $DB_HOST $DB_PORT $DB_PASS
         export DB_HOST DB_PORT DB_PASS
         exec /run.sh
         exit 1
