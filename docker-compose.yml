@@ -4,15 +4,15 @@
 web:
   image: samos123/drupal
   links:
-    - mysql:db
+    - db:mysql
   volumes:
     - /app
   ports:
     - "80:80"
 
-mysql:
-  image: tutum/mysql:5.6
+db:
+  image: mysql
   environment:
-    - MYSQL_PASS=password
+    - MYSQL_ROOT_PASSWORD=password
   volumes:
     - /var/lib/mysql
