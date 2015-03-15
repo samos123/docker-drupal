@@ -6,9 +6,12 @@ web:
   links:
     - db:mysql
   volumes:
-    - /app
+    - /app/sites/default/files
   ports:
     - "80:80"
+  environment:
+    - UPLOAD_LIMIT=20M
+    - MEMORY_LIMIT=64M
 
 db:
   image: mysql

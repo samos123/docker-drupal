@@ -75,5 +75,23 @@ else
     exit $DB_CONNECTABLE
 fi
 
-exec /run.sh
+if [ -n "$VIRTUAL_HOST" ]; then
+	if [ -z "$SERVERNAME" ]; then
+		SERVERNAME=$(echo $VIRTUAL_HOST | cut -f 1 -d ,)
+	else
+		echo >&2 "WARNING: Both SERVERNAME and VIRTUAL_HOST found."
+		echo >&2 "  Using SERVERNAME ($SERVERNAME) in httpd's config."
+	fi
+fi
+: ${SERVERNAME:=$(cat /etc/hostname)}
+echo "ServerName ${SERVERNAME}" >> /etc/apache2/apache2.conf
+
+PHP_CONF_PATH='/usr/local/etc/php/conf.d/'
+: ${UPLOAD_LIMIT:='10M'}
+echo -e "upload_max_filesize = ${UPLOAD_LIMIT}\npost_max_size = ${UPLOAD_LIMIT}" \
+	> $PHP_CONF_PATH'upload-limit.ini'
+: ${MEMORY_LIMIT:='128M'}
+echo "memory_limt = ${MEMORY_LIMIT}" > $PHP_CONF_PATH'memory-limit.ini'
+
+exec apache2-foreground
 exit 1
