@@ -2,13 +2,20 @@
 # For customization options see: https://docs.docker.com/compose/yml/
 
 web:
-  image: samos123/drupal
+# FIXME uncomment
+#  image: samos123/drupal
+  build: .
   links:
     - db:mysql
   volumes:
-    - /app
-  ports:
-    - "80:80"
+    - /app/sites/default/files
+# FIXME uncomment
+#  ports:
+#    - "80:80"
+  environment:
+    - VIRTUAL_HOST=test.docker.lan,docker.lan
+    - UPLOAD_LIMIT=20M
+    - MEMORY_LIMIT=64M
 
 db:
   image: mysql

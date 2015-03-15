@@ -1,12 +1,12 @@
 # Drupal image without database
 
-This image contains latest stable Drupal release of 7.x and is build from
-tutum-php it will automatically setup the database and install a default site
-for you.
+
+This image contains the latest stable Drupal 7-release. It will automatically
+setup the database and install a default site for you.
 
 The image doesn't contain a database so you have to create a seperate database
-container and link this container or pass the correct environment variables
-containing the database information.
+container and link this container or pass the database information of a
+MySQL-host.
 
 
 ## Why create another Drupal image?
@@ -16,9 +16,8 @@ automatically and didn't offer much flexibity. This image can be easily be used
 as base image for your own Drupal images see below Customization by using
 Dockerfiles.
 
-This image uses drush to install a default site and create the database on the
-linked db container so that you only have to specify custom modules and custom
-themes and you are ready to go.
+This image uses `drush` to install a default site and creates the database on
+the database-server if none exists yet.
 
 
 ## Usage
@@ -34,7 +33,7 @@ in a directory that contains the provided [`docker-compose.yml`](https://github.
     docker-compose up
 
 This will launch a new drupal site with a default theme and no additional
-modules. If you want custom modules I recommend using the approach listed below.
+modules. If you want custom modules, see *Customization*.
 
 
 ## Database options
@@ -49,6 +48,19 @@ container:
   - `DB_PASS`
 
 
+## Other options
+
+  - `VIRTUAL_HOST` - sets the `ServerName`-directive for *httpd*, handy in
+    conjunction with [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
+    - if it is a comma-seperated list, the first value is used
+  - `SERVERNAME` - use this to explitlty set the `ServerName`-directive
+    - if none of these both variables are given, the hostname will be used
+  - `UPLOAD_LIMIT` (default: `10M`) - sets variables for the *PHP*-interpreter
+    to control maximum upload sizes
+  - `MEMORY_LIMIT` (default: `128M`) - sets the [`memory_limit`](http://php.net/manual/en/ini.core.php#ini.memory-limit)
+     for the *PHP*-interpreter
+
+
 ## Customiziation
 
 To run a script that customizes the initial setup, add it to your derived
@@ -59,6 +71,10 @@ See the [folder examples](https://github.com/samos123/docker-tutum-drupal/tree/m
 of how to use the Zen template and google-analytics and build an image
 containing them.
 
+See the [documentation of php:apache](https://github.com/docker-library/php/) on
+the usage of `docker-php-ext-configure` and `docker-php-ext-install` to install
+PHP extensions.
+
 
 ## Credits
 
@@ -67,5 +83,3 @@ Authors of image: Sam Stoelinga, Frank Sachsenheim
 Source code: [https://github.com/samos123/docker-tutum-drupal](https://github.com/samos123/docker-tutum-drupal)
 
 Registry url: [https://registry.hub.docker.com/u/samos123/drupal/](https://registry.hub.docker.com/u/samos123/drupal/)
-
-This image is based on tutum-php and tutum-wordpress-nosql made by Tutum.
