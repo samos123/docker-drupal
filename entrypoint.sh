@@ -58,7 +58,8 @@ done
 if [[ $DB_CONNECTABLE -eq 0 ]]; then
     DB_EXISTS=$(mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e "SHOW DATABASES LIKE '"$DB_NAME"';" 2>&1 |grep "$DB_NAME" > /dev/null ; echo "$?")
     if [[ DB_EXISTS -eq 1  ]]; then
-		cd /app && drush site-install --db-url=mysql://$DB_USER:$DB_PASS@$DB_HOST/$DB_NAME \
+		# TODO  test dong this w/o --db-url
+		drush site-install --db-url=mysql://$DB_USER:$DB_PASS@$DB_HOST/$DB_NAME \
 	   		--site-name=default --account-pass=changeme << EOF
 y
 EOF
@@ -75,5 +76,28 @@ else
     exit $DB_CONNECTABLE
 fi
 
-exec /run.sh
+### PHP-settings
+
+: ${UPLOAD_LIMIT:='10M'}
+echo -e "upload_max_filesize = ${UPLOAD_LIMIT}\npost_max_size = ${UPLOAD_LIMIT}" \
+	> $PHP_INI_DIR'/conf.d/upload-limit.ini'
+: ${MEMORY_LIMIT:='64M'}
+echo "memory_limt = ${MEMORY_LIMIT}" > $PHP_INI_DIR'/conf.d/memory-limit.ini'
+
+### ensure proper file-permissions
+
+cd /var/www/html
+chown -R www-data.www-data .
+find . -type d -exec chmod ug=rx,o= '{}' \;
+find . -type f -exec chmod ug=r,o= '{}' \;
+cd sites
+find . -type d -exec chmod ug=rwx,o= '{}' \;
+for x in ./*/files; do
+	find ${x} -type d -exec chmod ug=rwx,o= '{}' \;
+find ${x} -type f -exec chmod ug=rw,o= '{}' \;
+done
+
+###
+
+exec apache2-foreground
 exit 1

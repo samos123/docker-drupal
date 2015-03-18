@@ -5,10 +5,11 @@ web:
   image: samos123/drupal
   links:
     - db:mysql
-  volumes:
-    - /app
   ports:
     - "80:80"
+  environment:
+    - UPLOAD_LIMIT=20M
+    - MEMORY_LIMIT=128M
 
 db:
   image: mysql
