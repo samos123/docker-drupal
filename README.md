@@ -1,27 +1,27 @@
 # Drupal image without database
 
 This image contains the latest stable Drupal 7-release. It will automatically
-setup the database and install a default site for you.
+setup the database and install a default site.
 
 The image doesn't contain a database so you have to create a seperate database
-container and link this container or pass the database information of a
+container (which is no effort if you use the provided configuration for
+*docker-compose*) and link this container or pass the database information of a
 MySQL-host.
 
 
 ## Why create another Drupal image?
 
-Many of the other Drupal images got a database baked in or didn't install Drupal
-automatically and didn't offer much flexibity. This image can be easily be used
-as base image for your own Drupal images see below Customization by using
-Dockerfiles.
-
-This image uses `drush` to install a default site and creates the database on
-the database-server if none exists yet.
+Many of the other Drupal images got a database baked in or didn't install
+Drupal automatically and didn't offer much flexibility. This image can be
+easily be used as base image for your own Drupal images see below Customization
+by using Dockerfiles. At the same time you can just use this image for a
+vanilla Drupal-experience that can be fully administered and extended via the
+web-interface as well as with *drush* on the command-line.
 
 
 ## Usage
 
-If you want to launch a bare drupal image you can do so:
+If you want to launch a bare Drupal image you can do so:
 
     docker run -d -e MYSQL_ROOT_PASSWORD="test123" --name db mysql
     docker run -d --link db:mysql -p 80:80 samos123/drupal
@@ -48,9 +48,9 @@ any modifications with:
 
 ## Database options
 
-You can use a linked database-container as shown above or use an external
-database-host. Therefore pass the following environment variables to your
-container:
+You can use a linked database-container as shown above - Drupal will be
+automatically configured. Or you use an external database-host. Therefore pass
+the following environment variables to your container:
 
   - `DB_HOST`
   - `DB_PORT` (default: `3306`)
@@ -61,17 +61,27 @@ container:
 
 ## Other options
 
+  - `VIRTUAL_HOST` - sets the `ServerName`-directive for *httpd* and *Drupal*'s
+    `base_url` configuration variable; handy in conjunction with
+    [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
+    - if it is a comma-seperated list, the first value is used
+  - `SERVERNAME` - use this to explicitly set httpd's `ServerName`-directive
+    - if none of these both variables are given, the `/etc/hostname` will be used
+  - `BASE_URL` - explicitly set the `base_url` configuration variable for *Drupal*
+    - trailing slashes are not allowed
+  - `BASE_URL_PROTO` (default: `https://`) - if `BASE_URL` is derived from
+    `VIRTUAL_HOST`, this will be prefixed as protocol
   - `UPLOAD_LIMIT` (default: `10M`) - sets variables for the *PHP*-interpreter
     to control maximum upload sizes
   - `MEMORY_LIMIT` (default: `64M`) - sets the [`memory_limit`](http://php.net/manual/en/ini.core.php#ini.memory-limit)
      for the *PHP*-interpreter
 
 
-## Customiziation
+## Customization
 
-To customize a Drupal-instance, you can add/modify scripts in a derived image
-or mount them in your container into one of these directories:
-`/scripts/setup.d` or `/scripts/pre-launch.d`. Furthermore,
+To create a customized Drupal-image, you can add/modify scripts in a derived
+image or mount them in your container into these directories:
+`/scripts/setup.d` and `/scripts/pre-launch.d`. Furthermore,
 
   - the scripts' name must start with two digits, the rest may consist of
     alphanumerics, `_` and `-`
@@ -79,7 +89,7 @@ or mount them in your container into one of these directories:
   - the scripts must be set executable (`chmod a+x <scriptpath>`)
 
 See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples)
-of how to use the *Zen*-template and the *modules_filer*-module and build an
+on how to use the *Zen*-template and the *modules_filter*-module and build an
 image containing them.
 
 *Drush*'s system-wide configuration (`/etc/drushrc.php`) sets its default-

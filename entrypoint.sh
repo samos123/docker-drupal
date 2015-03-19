@@ -87,7 +87,7 @@ if ! drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null ; then
 	if [ $EXTRA_SETUP_SCRIPT ]; then
 		echo "=> WARNING: The usage of EXTRA_SETUP_SCRIPT is deprectated. Put your script into /scripts/post-setup.d/"
 		. $EXTRA_SETUP_SCRIPT
-		echo "=> Successfully ran extra setup script ${EXTRA_SETUP_SCRIPT}."-]
+		echo "=> Successfully ran extra setup script ${EXTRA_SETUP_SCRIPT}."
 	fi
 else
     echo "=> Skipped setup - database ${DB_NAME} already exists."

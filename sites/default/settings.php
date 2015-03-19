@@ -13,7 +13,8 @@ $databases['default']['default'] = array(
   'prefix' => '',
 );
 
-#$base_url = getenv('BASE_URL');
+if (getenv('BASE_URL'))
+  $base_url = getenv('BASE_URL');
 
 $update_free_access = FALSE;
 
