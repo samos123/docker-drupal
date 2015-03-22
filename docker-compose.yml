@@ -12,6 +12,7 @@ web:
     - MEMORY_LIMIT=128M
   volumes:
     - /var/www/html
+    - /var/www/private
 
 db:
   image: mysql
