@@ -52,8 +52,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Add PHP-settings
 ADD php-conf.d/ $PHP_INI_DIR/conf.d/
 
-# Create private-files folder, copy sites/default's defaults
-RUN mkdir private && chown -R www-data:www-data /var/www
 WORKDIR html
 ADD sites/ sites/
 
