@@ -86,11 +86,11 @@ echo "memory_limt = ${MEMORY_LIMIT}" > $PHP_INI_DIR'/conf.d/memory-limit.ini'
 
 ### ensure proper file-permissions
 
-cd /var/www/html
+cd /var/www
 chown -R www-data.www-data .
 find . -type d -exec chmod ug=rx,o= '{}' \;
 find . -type f -exec chmod ug=r,o= '{}' \;
-cd sites
+cd html/sites
 find . -type d -exec chmod ug=rwx,o= '{}' \;
 for x in ./*/files; do
 	find ${x} -type d -exec chmod ug=rwx,o= '{}' \;

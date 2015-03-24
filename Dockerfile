@@ -53,11 +53,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 ADD php-conf.d/ $PHP_INI_DIR/conf.d/
 
 # Create private-files volume, copy sites/default's defaults and make it a volume
-RUN mkdir private && chown -R www-data:www-data /var/www
 WORKDIR html
 ADD sites/ sites/
-VOLUME /var/www/html/sites
-VOLUME /var/www/private
 
 # Add entrypoint-script to
 # - create 'drupal' DB and install default site, if necessary

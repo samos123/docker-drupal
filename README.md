@@ -34,6 +34,17 @@ in a directory that contains the provided [`docker-compose.yml`](https://github.
 This will launch a new drupal site with a default theme and no additional
 modules. If you want custom modules, see *Customization*.
 
+As customizations and uploads are stored you must take care of these directories
+if you want to keep these:
+  - `/var/www/html/sites` (modules, themes, files)
+  - `/var/www/private` (non-public files, e.g. to store backups)
+
+As these folders are defined as *volumes* in the sample `docker-compose.yml`,
+you can easily update your container to use the latest image while preserving
+any modifications with:
+
+    docker-compose pull && docker-compose up -d
+
 
 ## Database options
 
