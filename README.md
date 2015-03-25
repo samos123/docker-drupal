@@ -1,6 +1,6 @@
 # Drupal image without database
 
-This image contains the latest stable Drupal 7-release. It will automatically
+This image contains the latest stable Drupal 7 and 8-release. It will automatically
 setup the database and install a default site for you.
 
 The image doesn't contain a database so you have to create a seperate database

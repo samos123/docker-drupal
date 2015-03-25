@@ -32,21 +32,19 @@ RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev 
  && pecl install uploadprogress
 
 # Download Drupal from ftp.drupal.org
-ENV DRUPAL_VERSION=7.35
-ENV DRUPAL_TARBALL_MD5=fecc55bd0bd476bc35d9ebf68452942d
+ENV DRUPAL_VERSION=8.0.0-beta7
+ENV DRUPAL_TARBALL_MD5=b730108fbdd33ffe57fb94e94d293ebe
 WORKDIR /var/www
 RUN rm -R html \
  && curl -OsS http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz \
  && echo "${DRUPAL_TARBALL_MD5}  drupal-${DRUPAL_VERSION}.tar.gz" | md5sum -c \
  && tar -xf drupal-${DRUPAL_VERSION}.tar.gz && rm drupal-${DRUPAL_VERSION}.tar.gz \
- && mv drupal-${DRUPAL_VERSION} html \
- && cd html \
- && rm [A-Z]*.txt install.php web.config
+ && mv drupal-${DRUPAL_VERSION} html
 
 # Install composer and drush by using composer
 ENV COMPOSER_BIN_DIR=/usr/local/bin
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
- && composer global require drush/drush:6.* \
+ && composer global require drush/drush:7.0.*@dev \
  && drush cc drush
 
 # Add PHP-settings

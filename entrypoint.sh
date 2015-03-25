@@ -92,10 +92,12 @@ find . -type d -exec chmod ug=rx,o= '{}' \;
 find . -type f -exec chmod ug=r,o= '{}' \;
 cd html/sites
 find . -type d -exec chmod ug=rwx,o= '{}' \;
-for x in ./*/files; do
-	find ${x} -type d -exec chmod ug=rwx,o= '{}' \;
-find ${x} -type f -exec chmod ug=rw,o= '{}' \;
-done
+
+## SAM: This contains a bug for me when starting image
+#for x in ./*/files; do
+#	find ${x} -type d -exec chmod ug=rwx,o= '{}' \;
+#find ${x} -type f -exec chmod ug=rw,o= '{}' \;
+#done
 
 ###
 
