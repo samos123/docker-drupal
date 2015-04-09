@@ -1,0 +1,5 @@
+: ${UPLOAD_LIMIT:='10M'}
+echo -e "upload_max_filesize = ${UPLOAD_LIMIT}\npost_max_size = ${UPLOAD_LIMIT}" \
+	> $PHP_INI_DIR'/conf.d/upload-limit.ini'
+: ${MEMORY_LIMIT:='64M'}
+echo "memory_limt = ${MEMORY_LIMIT}" > $PHP_INI_DIR'/conf.d/memory-limit.ini'

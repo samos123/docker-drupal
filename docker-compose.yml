@@ -2,7 +2,7 @@
 # For customization options see: https://docs.docker.com/compose/yml/
 
 web:
-  image: samos123/drupal
+  image: samos123/drupal:7.x
   links:
     - db:mysql
   ports:

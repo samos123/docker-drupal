@@ -1,6 +1,21 @@
 #!/bin/bash
 set -e
 
+function run_scripts () {
+	SCRIPTS_DIR="/scripts/$1.d"
+	SCRIPT_FILES_PATTERN="^${SCRIPTS_DIR}/[0-9][0-9][a-zA-Z0-9_-]+$"
+	SCRIPTS=$(find "$SCRIPTS_DIR" -type f -uid 0 -executable -regex "$SCRIPT_FILES_PATTERN" | sort)
+	if [ -n "$SCRIPTS" ] ; then
+		echo "=>> $1-scripts:"
+	    for script in $SCRIPTS ; do
+	        echo "=> $script"
+			. "$script"
+	    done
+	fi
+}
+
+###
+
 if [ -n "$MYSQL_PORT_3306_TCP" ]; then
 	if [ -z "$DB_HOST" ]; then
 		DB_HOST=$MYSQL_PORT_3306_TCP_ADDR
@@ -36,6 +51,10 @@ if [ -z "$DB_PASS" ]; then
 fi
 
 export DB_HOST DB_PORT DB_NAME DB_USER DB_PASS
+echo -e "# Drupals's database configuration, parsed in /var/www/sites/default/settings.php\n
+export DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_NAME=${DB_NAME} DB_USER=${DB_USER} DB_PASS=${DB_PASS}" >> /root/.bashrc
+
+###
 
 echo "=> Trying to connect to MySQL/MariaDB using:"
 echo "========================================================================"
@@ -46,58 +65,38 @@ echo "      Database Username:      $DB_USER"
 echo "      Database Password:      $DB_PASS"
 echo "========================================================================"
 
-for ((i=0;i<10;i++))
+for ((i=0;i<20;i++))
 do
-    DB_CONNECTABLE=$(mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e 'status' >/dev/null 2>&1; echo "$?")
-    if [[ DB_CONNECTABLE -eq 0 ]]; then
+    DB_CONNECTABLE=$(mysql -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" -P"$DB_PORT" -e 'status' >/dev/null 2>&1; echo "$?")
+    if [[ $DB_CONNECTABLE -eq 0 ]]; then
         break
     fi
-    sleep 5
+    sleep 3
 done
 
-if [[ $DB_CONNECTABLE -eq 0 ]]; then
-    DB_EXISTS=$(mysql -u$DB_USER -p$DB_PASS -h$DB_HOST -P$DB_PORT -e "SHOW DATABASES LIKE '"$DB_NAME"';" 2>&1 |grep "$DB_NAME" > /dev/null ; echo "$?")
-    if [[ DB_EXISTS -eq 1  ]]; then
-		# TODO  test dong this w/o --db-url
-		drush site-install --db-url=mysql://$DB_USER:$DB_PASS@$DB_HOST/$DB_NAME \
-	   		--site-name=default --account-pass=changeme << EOF
-y
-EOF
-        echo "=> Done installing site using drush!"
-		if [ $EXTRA_SETUP_SCRIPT ]; then
-			. $EXTRA_SETUP_SCRIPT
-			echo "=> Successfully ran extra setup script ${EXTRA_SETUP_SCRIPT}."
-		fi
-    else
-        echo "=> Skipped creation of database $DB_NAME – it already exists."
-    fi
-else
-    echo "Cannot connect to Mysql"
+if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
+	echo "Cannot connect to MySQL"
     exit $DB_CONNECTABLE
 fi
 
-### PHP-settings
+###
 
-: ${UPLOAD_LIMIT:='10M'}
-echo -e "upload_max_filesize = ${UPLOAD_LIMIT}\npost_max_size = ${UPLOAD_LIMIT}" \
-	> $PHP_INI_DIR'/conf.d/upload-limit.ini'
-: ${MEMORY_LIMIT:='64M'}
-echo "memory_limt = ${MEMORY_LIMIT}" > $PHP_INI_DIR'/conf.d/memory-limit.ini'
-
-### ensure proper file-permissions
-
-cd /var/www
-chown -R www-data.www-data .
-find . -type d -exec chmod ug=rx,o= '{}' \;
-find . -type f -exec chmod ug=r,o= '{}' \;
-cd html/sites
-find . -type d -exec chmod ug=rwx,o= '{}' \;
-for x in ./*/files; do
-	find ${x} -type d -exec chmod ug=rwx,o= '{}' \;
-find ${x} -type f -exec chmod ug=rw,o= '{}' \;
-done
+if ! drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null ; then
+	run_scripts setup
+    echo "=> Done installing site!"
+	if [ $EXTRA_SETUP_SCRIPT ]; then
+		echo "=> WARNING: The usage of EXTRA_SETUP_SCRIPT is deprectated. Put your script into /scripts/post-setup.d/"
+		. $EXTRA_SETUP_SCRIPT
+		echo "=> Successfully ran extra setup script ${EXTRA_SETUP_SCRIPT}."-]
+	fi
+else
+    echo "=> Skipped setup - database ${DB_NAME} already exists."
+fi
 
 ###
 
+run_scripts pre-launch
+
 exec apache2-foreground
+
 exit 1

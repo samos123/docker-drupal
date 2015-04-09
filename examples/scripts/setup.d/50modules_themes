@@ -1,0 +1,3 @@
+drush pm-enable module_filter
+drush pm-enable zen
+drush vset theme_default zen

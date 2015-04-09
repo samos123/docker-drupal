@@ -41,22 +41,22 @@ RUN rm -R html \
  && tar -xf drupal-${DRUPAL_VERSION}.tar.gz && rm drupal-${DRUPAL_VERSION}.tar.gz \
  && mv drupal-${DRUPAL_VERSION} html \
  && cd html \
- && rm [A-Z]*.txt install.php web.config
+ && rm [A-Z]*.txt install.php web.config sites/default/default.settings.php
 
 # Install composer and drush by using composer
 ENV COMPOSER_BIN_DIR=/usr/local/bin
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && composer global require drush/drush:6.* \
- && drush cc drush
+ && drush cc drush \
+ && mkdir /etc/drush && echo "<?php\n\$options['yes'] = TRUE;\n\$options['v'] = TRUE;\n" > /etc/drush/drushrc.php
 
 # Add PHP-settings
 ADD php-conf.d/ $PHP_INI_DIR/conf.d/
 
-# Create private-files volume, copy sites/default's defaults and make it a volume
+# copy sites/default's defaults
 WORKDIR html
 ADD sites/ sites/
 
-# Add entrypoint-script to
-# - create 'drupal' DB and install default site, if necessary
-# - invoke the web server
-ADD entrypoint.sh /
+# Add README.md, entrypoint-script and scripts-folder
+ADD entrypoint.sh README.md  /
+ADD /scripts/ /scripts/
