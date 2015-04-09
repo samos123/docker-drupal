@@ -1,0 +1,1 @@
+drush site-install --site-name=default --account-pass=changeme

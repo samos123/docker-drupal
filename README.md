@@ -36,7 +36,7 @@ modules. If you want custom modules, see *Customization*.
 
 As customizations and uploads are stored you must take care of these directories
 if you want to keep these:
-  - `/var/www/html/sites` (modules, themes, files)
+  - `/var/www/html/sites` (modules, themes, uploaded files)
   - `/var/www/private` (non-public files, e.g. to store backups)
 
 As these folders are defined as *volumes* in the sample `docker-compose.yml`,
@@ -68,13 +68,25 @@ container:
 
 ## Customiziation
 
-To run a script that customizes the initial setup, add it to your derived
-image or mount it in your container and pass the variable `EXTRA_SETUP_SCRIPT`
-naming its absolute path when the container runs the first time.
+To customize a Drupal-instance, you can add/modify scripts in a derived image
+or mount them in your container into one of these directories:
+`/scripts/setup.d` or `/scripts/pre-launch.d`. Furthermore,
+
+  - the scripts' name must start with two digits, the rest may consist of
+    alphanumerics, `_` and `-`
+    - the scripts will be executed in alphanumerical order of their names
+  - the scripts must be set executable (`chmod a+x <scriptpath>`)
 
 See the [folder examples](https://github.com/samos123/docker-tutum-drupal/tree/master/examples)
-of how to use the Zen template and google-analytics and build an image
-containing them.
+of how to use the *Zen*-template and the *modules_filer*-module and build an
+image containing them.
+
+*Drush*'s system-wide configuration (`/etc/drushrc.php`) sets its default-
+behaviour to be verbose (`-v`) and affirmative (`--yes`) in order to grant easy
+and elaborated usage of scripts. If you want to change that behaviour in an
+interactive environment or for certain sites (e.g. `docker exec -ti
+<drupal_container> /bin/bash`), change it in an
+[overriding `drushrc.php`-location](https://raw.githubusercontent.com/drush-ops/drush/master/examples/example.drushrc.php).
 
 See the [documentation of php:apache](https://github.com/docker-library/php/) on
 the usage of `docker-php-ext-configure` and `docker-php-ext-install` to install
