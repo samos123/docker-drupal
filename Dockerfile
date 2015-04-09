@@ -32,8 +32,8 @@ RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev 
  && pecl install uploadprogress
 
 # Download Drupal from ftp.drupal.org
-ENV DRUPAL_VERSION=7.35
-ENV DRUPAL_TARBALL_MD5=fecc55bd0bd476bc35d9ebf68452942d
+ENV DRUPAL_VERSION=7.36
+ENV DRUPAL_TARBALL_MD5=98e1f62c11a5dc5f9481935eefc814c5
 WORKDIR /var/www
 RUN rm -R html \
  && curl -OsS http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz \
