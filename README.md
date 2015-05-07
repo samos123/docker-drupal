@@ -27,7 +27,7 @@ If you want to launch a bare drupal image you can do so:
     docker run -d --link db:mysql -p 80:80 samos123/drupal
 
 Alternatively you can use [Docker-Compose](https://docs.docker.com/compose/)
-in a directory that contains the provided [`docker-compose.yml`](https://github.com/samos123/docker-tutum-drupal/blob/master/docker-compose.yml):
+in a directory that contains the provided [`docker-compose.yml`](https://github.com/samos123/docker-drupal/blob/master/docker-compose.yml):
 
     docker-compose up
 
@@ -78,7 +78,7 @@ or mount them in your container into one of these directories:
     - the scripts will be executed in alphanumerical order of their names
   - the scripts must be set executable (`chmod a+x <scriptpath>`)
 
-See the [folder examples](https://github.com/samos123/docker-tutum-drupal/tree/master/examples)
+See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples)
 of how to use the *Zen*-template and the *modules_filer*-module and build an
 image containing them.
 
@@ -98,6 +98,6 @@ PHP extensions.
 
 Authors of image: Sam Stoelinga, Frank Sachsenheim
 
-Source code: [https://github.com/samos123/docker-tutum-drupal](https://github.com/samos123/docker-tutum-drupal)
+Source code: [https://github.com/samos123/docker-drupal](https://github.com/samos123/docker-drupal)
 
 Registry url: [https://registry.hub.docker.com/u/samos123/drupal/](https://registry.hub.docker.com/u/samos123/drupal/)
