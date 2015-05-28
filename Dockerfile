@@ -46,7 +46,7 @@ RUN rm -R html \
 # Install composer and drush by using composer
 ENV COMPOSER_BIN_DIR=/usr/local/bin
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
- && composer global require drush/drush:6.* \
+ && composer global require drush/drush:7.* \
  && drush cc drush \
  && mkdir /etc/drush && echo "<?php\n\$options['yes'] = TRUE;\n\$options['v'] = TRUE;\n" > /etc/drush/drushrc.php
 
