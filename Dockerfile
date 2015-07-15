@@ -18,7 +18,8 @@ RUN apt-get -q update \
     libpng12-0 \
     libx11-6 \
     libxpm4 \
-    mysql-client
+    mysql-client \
+    postgresql-client libpq-dev
 
 # Install PHP-extensions
 RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libxpm-dev re2c zlib1g-dev"; \
@@ -26,7 +27,7 @@ RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev 
  && docker-php-ext-configure gd \
         --with-jpeg-dir=/usr/lib/x86_64-linux-gnu --with-png-dir=/usr/lib/x86_64-linux-gnu \
         --with-xpm-dir=/usr/lib/x86_64-linux-gnu --with-freetype-dir=/usr/lib/x86_64-linux-gnu \
- && docker-php-ext-install gd mbstring pdo_mysql zip \
+ && docker-php-ext-install gd mbstring pdo_mysql pdo_pgsql zip \
  && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false -o APT::AutoRemove::SuggestsImportant=false $BUILD_DEPS \
  && rm -rf /var/lib/apt/lists/* \
  && pecl install uploadprogress
