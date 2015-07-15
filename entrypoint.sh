@@ -91,14 +91,13 @@ do
         if [[ $DB_CONNECTABLE -eq 0 ]]; then
             break
         fi
-        sleep 3
     else
         DB_CONNECTABLE=$(psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -l >/dev/null 2>&1; echo "$?")
         if [[ $DB_CONNECTABLE -eq 0 ]]; then
             break
         fi
-        sleep 3
     fi
+    sleep 3
 done
 
 if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
