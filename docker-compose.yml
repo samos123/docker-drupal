@@ -6,7 +6,7 @@ web:
   #build: .
   links:
     - db:mysql
-    #- db_postgres:postgres
+    #- dbpostgres:postgres
   #ports:
   #  - "80:80"
   volumes:
@@ -25,7 +25,7 @@ db:
   volumes:
     - /var/lib/mysql
 
-#db_postgres:
+#dbpostgres:
 #  image: postgres:9.3
 #  environment:
 #    - POSTGRES_PASSWORD=password
