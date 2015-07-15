@@ -7,14 +7,16 @@ web:
   links:
     - db:mysql
     #- db_postgres:postgres
-  ports:
-    - "80:80"
+  #ports:
+  #  - "80:80"
   volumes:
     - /var/www/html/sites
     - /var/www/private
   environment:
     - UPLOAD_LIMIT=20M
     - MEMORY_LIMIT=128M
+    - VIRTUAL_HOST=foo.bar.zap
+    - BASE_URL_PROTO=http://
 
 db:
   image: mysql

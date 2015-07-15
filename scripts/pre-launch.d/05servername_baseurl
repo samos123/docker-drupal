@@ -1,0 +1,17 @@
+: "${BASE_URL_PROTO:='https://'}"
+
+if [ -n "$VIRTUAL_HOST" ]; then
+	if [ -z "$SERVERNAME" ]; then
+		SERVERNAME=$(echo "$VIRTUAL_HOST" | cut -f 1 -d ,)
+	fi
+	if [ -z "$BASE_URL" ]; then
+		BASE_URL="${BASE_URL_PROTO}"$(echo "$VIRTUAL_HOST" | cut -f 1 -d ,)
+	fi
+fi
+
+: "${SERVERNAME:=$(cat /etc/hostname)}"
+echo ServerName "${SERVERNAME}" >> /etc/apache2/apache2.conf
+
+if [ -n "$BASE_URL" ]; then
+	export BASE_URL
+fi
