@@ -3,12 +3,8 @@
 
 web:
   image: samos123/drupal:7.x
-  #build: .
   links:
     - db:mysql
-    #- dbpostgres:postgres
-  #ports:
-  #  - "80:80"
   volumes:
     - /var/www/html/sites
     - /var/www/private
@@ -24,10 +20,3 @@ db:
     - MYSQL_ROOT_PASSWORD=password
   volumes:
     - /var/lib/mysql
-
-#dbpostgres:
-#  image: postgres:9.3
-#  environment:
-#    - POSTGRES_PASSWORD=password
-#  volumes:
-#    - /var/lib/postgresql/data

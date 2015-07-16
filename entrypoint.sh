@@ -17,7 +17,7 @@ function run_scripts () {
 ###
 
 if [ -n "$MYSQL_PORT_3306_TCP" ]; then
-	DB_TYPE=mysql
+	DB_DRIVER=mysql
 	if [ -z "$DB_HOST" ]; then
 		DB_HOST=$MYSQL_PORT_3306_TCP_ADDR
 		DB_PORT=$MYSQL_PORT_3306_TCP_PORT
@@ -32,7 +32,7 @@ if [ -n "$MYSQL_PORT_3306_TCP" ]; then
 	fi
 	: ${DB_PORT:='3306'}
 elif [ -n "$POSTGRES_PORT_5432_TCP" ]; then
-	DB_TYPE=pgsql
+	DB_DRIVER=pgsql
 	if [ -z "$DB_HOST" ]; then
 		DB_HOST=$POSTGRES_PORT_5432_TCP_ADDR
 		DB_PORT=$POSTGRES_PORT_5432_TCP_PORT
@@ -46,14 +46,11 @@ elif [ -n "$POSTGRES_PORT_5432_TCP" ]; then
 	if [ "$DB_USER" = 'postgres' ]; then
 		: ${DB_PASS:=$POSTGRES_ENV_POSTGRES_PASSWORD}
 	fi
-
-	echo "${DB_HOST}:${DB_PORT}:*:${DB_USER}:${DB_PASS}" > ~/.pgpass
-	chmod 600 ~/.pgpass
 fi
 
 if [ -z "$DB_HOST" ]; then
-	echo >&2 'ERROR: missing DB_HOST and MYSQL_PORT_3306_TCP environment variables.'
-	echo >&2 '  Did you forget to --link some_mysql_container:mysql or set an external db'
+	echo >&2 'ERROR: missing DB_HOST and MYSQL_PORT_3306_TCP or POSTGRES_PORT_5432_TCP environment variables.'
+	echo >&2 '  Did you forget to --link some_mysql_container:mysql, --link some_postgres_container:postgres, or set an external db'
 	echo >&2 '  with -e DB_HOST=hostname?'
 	exit 1
 fi
@@ -68,15 +65,15 @@ if [ -z "$DB_PASS" ]; then
 	exit 1
 fi
 
-export DB_TYPE DB_HOST DB_PORT DB_NAME DB_USER DB_PASS
+export DB_DRIVER DB_HOST DB_PORT DB_NAME DB_USER DB_PASS
 echo -e "# Drupals's database configuration, parsed in /var/www/sites/default/settings.php\n
-export DB_TYPE=${DB_TYPE} DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_NAME=${DB_NAME} DB_USER=${DB_USER} DB_PASS=${DB_PASS}" >> /root/.bashrc
+export DB_DRIVER=${DB_DRIVER} DB_HOST=${DB_HOST} DB_PORT=${DB_PORT} DB_NAME=${DB_NAME} DB_USER=${DB_USER} DB_PASS=${DB_PASS}" >> /root/.bashrc
 
 ###
 
-echo "=> Trying to connect to database using:"
+echo "=> Trying to connect to a database using:"
 echo "========================================================================"
-echo "      Database Type:          $DB_TYPE"
+echo "      Database Type:          $DB_DRIVER"
 echo "      Database Host Address:  $DB_HOST"
 echo "      Database Port number:   $DB_PORT"
 echo "      Database Name:          $DB_NAME"
@@ -86,7 +83,7 @@ echo "========================================================================"
 
 for ((i=0;i<20;i++))
 do
-    if [[ $DB_TYPE == "mysql" ]]; then
+    if [[ $DB_DRIVER == "mysql" ]]; then
         DB_CONNECTABLE=$(mysql -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" -P"$DB_PORT" -e 'status' >/dev/null 2>&1; echo "$?")
         if [[ $DB_CONNECTABLE -eq 0 ]]; then
             break
@@ -106,7 +103,7 @@ if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
 fi
 ###
 
-if [[ $DB_TYPE == "mysql" ]]; then
+if [[ $DB_DRIVER == "mysql" ]]; then
 	if ! drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null ; then
 		run_scripts setup
 	    echo "=> Done installing site!"
@@ -118,7 +115,7 @@ if [[ $DB_TYPE == "mysql" ]]; then
 	else
 	    echo "=> Skipped setup - database ${DB_NAME} already exists."
 	fi
-elif [[ $DB_TYPE == "pgsql" ]]; then
+elif [[ $DB_DRIVER == "pgsql" ]]; then
 	drush sql-query --result-file='table-query.txt' '\dt';
 	lines=$(wc -l table-query.txt | sed 's/ .*//g')
 	if [[ $lines -eq 0 ]]; then

@@ -16,10 +16,11 @@ RUN apt-get -q update \
     libfreetype6 \
     libjpeg62 \
     libpng12-0 \
+    libpq-dev \
     libx11-6 \
     libxpm4 \
     mysql-client \
-    postgresql-client libpq-dev
+    postgresql-client
 
 # Install PHP-extensions
 RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev libxpm-dev re2c zlib1g-dev"; \

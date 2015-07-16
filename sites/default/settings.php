@@ -5,7 +5,7 @@
  */
 $databases = array();
 $databases['default']['default'] = array(
-  'driver' => getenv('DB_TYPE'),
+  'driver' => getenv('DB_DRIVER'),
   'database' => getenv('DB_NAME'),
   'username' => getenv('DB_USER'),
   'password' => getenv('DB_PASS'),

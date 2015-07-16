@@ -6,7 +6,7 @@ setup the database and install a default site.
 The image doesn't contain a database so you have to create a seperate database
 container (which is no effort if you use the provided configuration for
 *docker-compose*) and link this container or pass the database information of a
-MySQL-host.
+MySQL-host or Postgres-host.
 
 
 ## Why create another Drupal image?
@@ -21,7 +21,7 @@ web-interface as well as with *drush* on the command-line.
 
 ## Usage
 
-If you want to launch a bare Drupal image you can do so:
+If you want to launch a bare Drupal image with a MySQL backend you can do so:
 
     docker run -d -e MYSQL_ROOT_PASSWORD="test123" --name db mysql
     docker run -d --link db:mysql -p 80:80 samos123/drupal
@@ -57,6 +57,33 @@ the following environment variables to your container:
   - `DB_NAME` (default: `drupal`)
   - `DB_USER` (default: `root`)
   - `DB_PASS`
+
+### Postgres
+
+In addition to the linked MySQL backend, you can alternatively use a Postgres
+container. The configuration is very similar to that of MySQL as seen in the
+`docker-compose.yml` file, with a couple small changes.
+
+In the `web` section, you'll need to link in a container under the name
+`postgres`, like so:
+
+```yaml
+web:
+  image: samos123/drupal:7.x
+  links:
+    - db:postgres
+```
+
+and then you'll need to supply a Postgres image instead of a MySQL image:
+
+```yaml
+db:
+  image: postgres:9.3
+  environment:
+    - POSTGRES_PASSWORD=password
+  volumes:
+    - /var/lib/postgresql/data
+```
 
 
 ## Other options
