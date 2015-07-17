@@ -7,10 +7,10 @@ function run_scripts () {
 	SCRIPTS=$(find "$SCRIPTS_DIR" -type f -uid 0 -executable -regex "$SCRIPT_FILES_PATTERN" | sort)
 	if [ -n "$SCRIPTS" ] ; then
 		echo "=>> $1-scripts:"
-	    for script in $SCRIPTS ; do
-	        echo "=> $script"
+		for script in $SCRIPTS ; do
+			echo "=> $script"
 			. "$script"
-	    done
+		done
 	fi
 }
 
@@ -85,44 +85,44 @@ echo "========================================================================"
 
 for ((i=0;i<20;i++))
 do
-    if [[ $DB_DRIVER == "mysql" ]]; then
-        DB_CONNECTABLE=$(mysql -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" -P"$DB_PORT" -e 'status' >/dev/null 2>&1; echo "$?")
-        if [[ $DB_CONNECTABLE -eq 0 ]]; then
-            break
-        fi
-    else
-        DB_CONNECTABLE=$(PGPASSWORD=$DB_PASS psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -l >/dev/null 2>&1; echo "$?")
-        if [[ $DB_CONNECTABLE -eq 0 ]]; then
-            break
-        fi
-    fi
-    sleep 3
+	if [[ $DB_DRIVER == "mysql" ]]; then
+		DB_CONNECTABLE=$(mysql -u"$DB_USER" -p"$DB_PASS" -h"$DB_HOST" -P"$DB_PORT" -e 'status' >/dev/null 2>&1; echo "$?")
+		if [[ $DB_CONNECTABLE -eq 0 ]]; then
+			break
+		fi
+	else
+		DB_CONNECTABLE=$(PGPASSWORD=$DB_PASS psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -l >/dev/null 2>&1; echo "$?")
+		if [[ $DB_CONNECTABLE -eq 0 ]]; then
+			break
+		fi
+	fi
+	sleep 3
 done
 
 if ! [[ $DB_CONNECTABLE -eq 0 ]]; then
 	echo "Cannot connect to database"
-    exit $DB_CONNECTABLE
+	exit $DB_CONNECTABLE
 fi
 ###
 
 if [[ $DB_DRIVER == "mysql" ]]; then
 	if ! drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null ; then
 		run_scripts setup
-	    echo "=> Done installing site!"
+		echo "=> Done installing site!"
 		if [ $EXTRA_SETUP_SCRIPT ]; then
 			echo "=> WARNING: The usage of EXTRA_SETUP_SCRIPT is deprectated. Put your script into /scripts/post-setup.d/"
 			. $EXTRA_SETUP_SCRIPT
 			echo "=> Successfully ran extra setup script ${EXTRA_SETUP_SCRIPT}."-]
 		fi
 	else
-	    echo "=> Skipped setup - database ${DB_NAME} already exists."
+		echo "=> Skipped setup - database ${DB_NAME} already exists."
 	fi
 elif [[ $DB_DRIVER == "pgsql" ]]; then
 	drush sql-query --result-file='table-query.txt' '\dt node_comment_statistics';
 	lines=$(wc -l table-query.txt | sed 's/ .*//g')
 	if [[ $lines -eq 0 ]]; then
 		run_scripts setup
-	    echo "=> Done installing site!"
+		echo "=> Done installing site!"
 	else
 		echo "=> Skipped setup - drupal tables already exist."
 	fi
