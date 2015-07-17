@@ -91,7 +91,7 @@ do
             break
         fi
     else
-        DB_CONNECTABLE=$(psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -l >/dev/null 2>&1; echo "$?")
+        DB_CONNECTABLE=$(PGPASSWORD=$DB_PASS psql -U "$DB_USER" -h "$DB_HOST" -p "$DB_PORT" -l >/dev/null 2>&1; echo "$?")
         if [[ $DB_CONNECTABLE -eq 0 ]]; then
             break
         fi
