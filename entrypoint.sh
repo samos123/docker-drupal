@@ -118,12 +118,13 @@ if [[ $DB_DRIVER == "mysql" ]]; then
 	    echo "=> Skipped setup - database ${DB_NAME} already exists."
 	fi
 elif [[ $DB_DRIVER == "pgsql" ]]; then
-	drush sql-query --result-file='table-query.txt' '\dt';
+	drush sql-query --result-file='table-query.txt' '\dt node_comment_statistics';
 	lines=$(wc -l table-query.txt | sed 's/ .*//g')
 	if [[ $lines -eq 0 ]]; then
 		run_scripts setup
+	    echo "=> Done installing site!"
 	else
-		echo "=> Skipped setup - table drupal already exists."
+		echo "=> Skipped setup - drupal tables already exist."
 	fi
 fi
 
