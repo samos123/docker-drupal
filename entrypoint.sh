@@ -55,6 +55,8 @@ if [ -z "$DB_HOST" ]; then
 	exit 1
 fi
 
+# Maintains backward compatability with raw specification of DB_*
+: ${DB_DRIVER:='mysql'}
 : ${DB_NAME:='drupal'}
 
 if [ -z "$DB_PASS" ]; then

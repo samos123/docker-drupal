@@ -6,7 +6,7 @@ setup the database and install a default site.
 The image doesn't contain a database so you have to create a seperate database
 container (which is no effort if you use the provided configuration for
 *docker-compose*) and link this container or pass the database information of a
-MySQL-host or Postgres-host.
+MySQL- or Postgres-host.
 
 
 ## Why create another Drupal image?
@@ -57,34 +57,18 @@ the following environment variables to your container:
   - `DB_NAME` (default: `drupal`)
   - `DB_USER` (default: `root`)
   - `DB_PASS`
+  - `DB_DRIVER` (default: `mysql`)
+
+If you link in a database container under the proper linked name, then
+`DB_DRIVER` will automatically be set to the appropriate database type.
 
 ### Postgres
 
-In addition to the linked MySQL backend, you can alternatively use a Postgres
-container. The configuration is very similar to that of MySQL as seen in the
-`docker-compose.yml` file, with a couple small changes.
+You can alternatively use a Postgres container. The configuration is very
+similar to that of MySQL as seen in the `docker-compose.yml` file, with a
+couple small changes.
 
-In the `web` section, you'll need to link in a container under the name
-`postgres`, like so:
-
-```yaml
-web:
-  image: samos123/drupal:7.x
-  links:
-    - db:postgres
-```
-
-and then you'll need to supply a Postgres image instead of a MySQL image:
-
-```yaml
-db:
-  image: postgres:9.3
-  environment:
-    - POSTGRES_PASSWORD=password
-  volumes:
-    - /var/lib/postgresql/data
-```
-
+There is an example `docker-compose.yml` available in the [examples folder](./examples/postgres/docker-compose.yml).
 
 ## Other options
 
@@ -115,7 +99,7 @@ image or mount them in your container into these directories:
     - the scripts will be executed in alphanumerical order of their names
   - the scripts must be set executable (`chmod a+x <scriptpath>`)
 
-See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples)
+See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples/custom-image)
 on how to use the *Zen*-template and the *modules_filter*-module and build an
 image containing them.
 
