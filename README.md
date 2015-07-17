@@ -68,7 +68,7 @@ You can alternatively use a Postgres container. The configuration is very
 similar to that of MySQL as seen in the `docker-compose.yml` file, with a
 couple small changes.
 
-There is an example `docker-compose.yml` available in the [examples folder](./examples/postgres/docker-compose.yml).
+There is an example `docker-compose.yml` available in the [examples folder](https://github.com/samos123/docker-drupal/tree/master/examples/postgres/docker-compose.yml).
 
 ## Other options
 
