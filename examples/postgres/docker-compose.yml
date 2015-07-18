@@ -15,7 +15,7 @@ web:
     - BASE_URL_PROTO=http://
 
 db:
-  image: postgres:9.3
+  image: postgres
   environment:
     - POSTGRES_PASSWORD=password
   volumes:

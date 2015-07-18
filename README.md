@@ -48,19 +48,23 @@ any modifications with:
 
 ## Database options
 
-You can use a linked database-container as shown above - Drupal will be
-automatically configured. Or you use an external database-host. Therefore pass
-the following environment variables to your container:
+You can use a linked database-container with the alias `mysql` or `postgres` as
+shown above - Drupal will be automatically configured to it. Or you use an
+external database-host. Therefore pass the following environment variables to
+your container:
 
+  - `DB_DRIVER`
+    - allowed values are `mysql` (default) and `pgsql`
   - `DB_HOST`
-  - `DB_PORT` (default: `3306`)
-  - `DB_NAME` (default: `drupal`)
-  - `DB_USER` (default: `root`)
+  - `DB_PORT`
+    - default: `3306` if `DB_DRIVER` == 'mysql'
+    - default: `5432` if `DB_DRIVER` == 'pdsql'
+  - `DB_NAME`
+    - default: `drupal`
+  - `DB_USER`
+    - default: `root` if `DB_DRIVER` == 'mysql'
+    - default: `postgres` if `DB_DRIVER` == 'pdsql'
   - `DB_PASS`
-  - `DB_DRIVER` (default: `mysql`)
-
-If you link in a database container under the proper linked name, then
-`DB_DRIVER` will automatically be set to the appropriate database type.
 
 ### Postgres
 
@@ -117,7 +121,7 @@ PHP extensions.
 
 ## Credits
 
-Authors of image: Sam Stoelinga, Frank Sachsenheim
+Authors of image: Sam Stoelinga, Frank Sachsenheim, Eric Rasche
 
 Source code: [https://github.com/samos123/docker-drupal](https://github.com/samos123/docker-drupal)
 
