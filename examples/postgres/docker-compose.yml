@@ -4,7 +4,7 @@
 web:
   image: samos123/drupal:7.x
   links:
-    - db:mysql
+    - db:postgres
   volumes:
     - /var/www/html/sites
     - /var/www/private
@@ -15,8 +15,8 @@ web:
     - BASE_URL_PROTO=http://
 
 db:
-  image: mysql
+  image: postgres
   environment:
-    - MYSQL_ROOT_PASSWORD=password
+    - POSTGRES_PASSWORD=password
   volumes:
-     - /var/lib/mysql
+    - /var/lib/postgresql/data

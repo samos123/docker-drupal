@@ -6,7 +6,7 @@ setup the database and install a default site.
 The image doesn't contain a database so you have to create a seperate database
 container (which is no effort if you use the provided configuration for
 *docker-compose*) and link this container or pass the database information of a
-MySQL-host.
+MySQL- or Postgres-host.
 
 
 ## Why create another Drupal image?
@@ -21,7 +21,7 @@ web-interface as well as with *drush* on the command-line.
 
 ## Usage
 
-If you want to launch a bare Drupal image you can do so:
+If you want to launch a bare Drupal image with a MySQL backend you can do so:
 
     docker run -d -e MYSQL_ROOT_PASSWORD="test123" --name db mysql
     docker run -d --link db:mysql -p 80:80 samos123/drupal
@@ -48,16 +48,31 @@ any modifications with:
 
 ## Database options
 
-You can use a linked database-container as shown above - Drupal will be
-automatically configured. Or you use an external database-host. Therefore pass
-the following environment variables to your container:
+You can use a linked database-container with the alias `mysql` or `postgres` as
+shown above - Drupal will be automatically configured to it. Or you use an
+external database-host. Therefore pass the following environment variables to
+your container:
 
+  - `DB_DRIVER`
+    - allowed values are `mysql` (default) and `pgsql`
   - `DB_HOST`
-  - `DB_PORT` (default: `3306`)
-  - `DB_NAME` (default: `drupal`)
-  - `DB_USER` (default: `root`)
+  - `DB_PORT`
+    - default: `3306` if `DB_DRIVER` == 'mysql'
+    - default: `5432` if `DB_DRIVER` == 'pdsql'
+  - `DB_NAME`
+    - default: `drupal`
+  - `DB_USER`
+    - default: `root` if `DB_DRIVER` == 'mysql'
+    - default: `postgres` if `DB_DRIVER` == 'pdsql'
   - `DB_PASS`
 
+### Postgres
+
+You can alternatively use a Postgres container. The configuration is very
+similar to that of MySQL as seen in the `docker-compose.yml` file, with a
+couple small changes.
+
+There is an example `docker-compose.yml` available in the [examples folder](https://github.com/samos123/docker-drupal/tree/master/examples/postgres/docker-compose.yml).
 
 ## Other options
 
@@ -88,7 +103,7 @@ image or mount them in your container into these directories:
     - the scripts will be executed in alphanumerical order of their names
   - the scripts must be set executable (`chmod a+x <scriptpath>`)
 
-See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples)
+See the [folder examples](https://github.com/samos123/docker-drupal/tree/master/examples/custom-image)
 on how to use the *Zen*-template and the *modules_filter*-module and build an
 image containing them.
 
@@ -106,7 +121,7 @@ PHP extensions.
 
 ## Credits
 
-Authors of image: Sam Stoelinga, Frank Sachsenheim
+Authors of image: Sam Stoelinga, Frank Sachsenheim, Eric Rasche
 
 Source code: [https://github.com/samos123/docker-drupal](https://github.com/samos123/docker-drupal)
 
