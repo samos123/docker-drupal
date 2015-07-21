@@ -128,7 +128,7 @@ elif [[ $DB_DRIVER == "pgsql" ]]; then
 	drush sql-query '\l' > /dev/null || TABLE_EXISTS=$?
 fi
 
-if ! $TABLE_EXISTS; then
+if [[ $TABLE_EXISTS -ne 0 ]]; then
 	run_scripts setup
 	echo "=> Done installing site!"
 	if [ $EXTRA_SETUP_SCRIPT ]; then

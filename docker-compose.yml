@@ -5,6 +5,7 @@ web:
   image: samos123/drupal:7.x
   links:
     - db:mysql
+
   volumes:
     - /var/www/html/sites
     - /var/www/private
@@ -19,4 +20,4 @@ db:
   environment:
     - MYSQL_ROOT_PASSWORD=password
   volumes:
-     - /var/lib/mysql
+    - /var/lib/mysql

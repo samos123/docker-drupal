@@ -58,12 +58,12 @@ your container:
   - `DB_HOST`
   - `DB_PORT`
     - default: `3306` if `DB_DRIVER` == 'mysql'
-    - default: `5432` if `DB_DRIVER` == 'pdsql'
+    - default: `5432` if `DB_DRIVER` == 'pgsql'
   - `DB_NAME`
     - default: `drupal`
   - `DB_USER`
     - default: `root` if `DB_DRIVER` == 'mysql'
-    - default: `postgres` if `DB_DRIVER` == 'pdsql'
+    - default: `postgres` if `DB_DRIVER` == 'pgsql'
   - `DB_PASS`
 
 ### Postgres
