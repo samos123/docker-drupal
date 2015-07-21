@@ -59,6 +59,7 @@ ADD php-conf.d/ $PHP_INI_DIR/conf.d/
 WORKDIR html
 ADD sites/ sites/
 
+ENV DRUPAL_ADMIN_PASSWORD changeme
 # Add README.md, entrypoint-script and scripts-folder
 ADD entrypoint.sh README.md  /
 ADD /scripts/ /scripts/
