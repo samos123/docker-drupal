@@ -61,6 +61,7 @@ your container:
     - default: `5432` if `DB_DRIVER` == 'pgsql'
   - `DB_NAME`
     - default: `drupal`
+    - default: `postgres` if `DB_DRIVER == pgsql`
   - `DB_USER`
     - default: `root` if `DB_DRIVER` == 'mysql'
     - default: `postgres` if `DB_DRIVER` == 'pgsql'

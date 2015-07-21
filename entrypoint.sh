@@ -7,8 +7,8 @@ function run_scripts () {
 	SCRIPTS=$(find "$SCRIPTS_DIR" -type f -uid 0 -executable -regex "$SCRIPT_FILES_PATTERN" | sort)
 	if [ -n "$SCRIPTS" ] ; then
 		echo "=>> $1-scripts:"
-	    for script in $SCRIPTS ; do
-	        echo "=> $script"
+		for script in $SCRIPTS ; do
+			echo "=> $script"
 			. "$script"
 	    done
 	fi
@@ -44,6 +44,7 @@ elif [ -n "$POSTGRES_PORT_5432_TCP" ]; then
 		echo >&2 "  Connecting to DB_HOST ($DB_HOST)"
 		echo >&2 "  instead of the linked postgres container."
 	fi
+	: ${DB_NAME:='postgres'}
 fi
 
 if [ -z "$DB_HOST" ]; then
@@ -125,7 +126,14 @@ fi
 if [[ $DB_DRIVER == "mysql" ]]; then
 	drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null || TABLE_EXISTS=$?
 elif [[ $DB_DRIVER == "pgsql" ]]; then
-	drush sql-query '\l' > /dev/null || TABLE_EXISTS=$?
+	tmpfile=$(mktemp);
+	drush sql-query --result-file=$tmpfile '\dt' > /dev/null;
+	if [[ -s "$tmpfile" ]]; then
+		TABLE_EXISTS=0;
+	else
+		TABLE_EXISTS=1;
+	fi
+	rm $tmpfile
 fi
 
 if [[ $TABLE_EXISTS -ne 0 ]]; then
