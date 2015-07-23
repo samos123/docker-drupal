@@ -14,4 +14,5 @@ echo ServerName "${SERVERNAME}" >> /etc/apache2/apache2.conf
 
 if [ -n "$BASE_URL" ]; then
 	export BASE_URL
+	echo -e "# Drupal's base_url-variable\nexport BASE_URL=${BASE_URL}" >> /etc/bash.bashrc
 fi
