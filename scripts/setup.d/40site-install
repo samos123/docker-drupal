@@ -1,1 +1,1 @@
-drush site-install --site-name=default --account-pass=${DRUPAL_ADMIN_PASSWORD}
+drush site-install --site-name=default --account-name=${DRUPAL_ADMIN_ACCOUNT_NAME} --account-pass=${DRUPAL_ADMIN_PASSWORD}

@@ -94,6 +94,7 @@ There is an example `docker-compose.yml` available in the [examples folder](http
     default admin user is `admin`, and the default password is `changeme`.
     Changing this variable on an existing installation, or subsequent restarts
     of linked containers has no effect.
+  - `DRUPAL_ADMIN_ACCOUNT_NAME` (default: `admin`) - sets the default administrator account name.
 
 
 ## Customization
