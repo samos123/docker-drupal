@@ -90,6 +90,10 @@ There is an example `docker-compose.yml` available in the [examples folder](http
     to control maximum upload sizes
   - `MEMORY_LIMIT` (default: `64M`) - sets the [`memory_limit`](http://php.net/manual/en/ini.core.php#ini.memory-limit)
      for the *PHP*-interpreter
+  - `DRUPAL_ADMIN_PASSWORD` - sets the default administrator password. The
+    default admin user is `admin`, and the default password is `changeme`.
+    Changing this variable on an existing installation, or subsequent restarts
+    of linked containers has no effect.
 
 
 ## Customization
