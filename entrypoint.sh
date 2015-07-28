@@ -14,7 +14,7 @@ function run_scripts () {
 	fi
 }
 
-### auto-configure from environment-variables
+### auto-configure database from environment-variables
 
 if [ -n "$MYSQL_PORT_3306_TCP" ] && [ -n "$POSTGRES_PORT_5432_TCP" ]; then
 	if [ -z "$DB_HOST" ] && [ -z "$DB_DRIVER" ]; then
@@ -54,7 +54,7 @@ if [ -z "$DB_HOST" ]; then
 fi
 
 
-### set configuration-defauls if necessary and set driver-specific statements
+### set database configuration defaults if necessary
 
 : ${DB_DRIVER:='mysql'}
 : ${DB_NAME:='drupal'}
@@ -80,6 +80,12 @@ if [ -z "$DB_PASS" ]; then
 	echo >&2 "  (Also of interest might be DB_USER and DB_NAME.)"
 	exit 1
 fi
+
+
+### other defaults
+
+: ${ADMIN_USER:='admin'}  # DO NOT export!
+: ${ADMIN_PASSWORD:='changeme'}  # DO NOT export!
 
 
 ### store database-configuration
@@ -144,6 +150,9 @@ fi
 ###
 
 run_scripts pre-launch
+
+unset ADMIN_USER
+unset ADMIN_PASSWORD
 
 exec apache2-foreground
 

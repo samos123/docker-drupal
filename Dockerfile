@@ -36,8 +36,6 @@ RUN BUILD_DEPS="libfreetype6-dev libjpeg62-turbo-dev libmcrypt-dev libpng12-dev 
 # Download Drupal from ftp.drupal.org
 ENV DRUPAL_VERSION=7.38
 ENV DRUPAL_TARBALL_MD5=c18298c1a5aed32ddbdac605fdef7fce
-ENV DRUPAL_ADMIN_ACCOUNT_NAME=admin
-ENV DRUPAL_ADMIN_PASSWORD=changeme
 WORKDIR /var/www
 RUN rm -R html \
  && curl -OsS http://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz \
