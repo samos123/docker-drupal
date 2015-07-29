@@ -128,13 +128,7 @@ fi
 
 ### Initial setup if database doesn't exist
 
-if [[ $DB_DRIVER == "mysql" ]]; then
-	drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null || TABLE_EXISTS=$?
-elif [[ $DB_DRIVER == "pgsql" ]]; then
-	drush sql-query '\l' > /dev/null || TABLE_EXISTS=$?
-fi
-
-if [[ $TABLE_EXISTS -ne 0 ]]; then
+if ! drush pm-list > /dev/null 2>&1; then
 	run_scripts setup
 	echo "=> Done installing site!"
 	if [ $EXTRA_SETUP_SCRIPT ]; then
