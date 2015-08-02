@@ -81,8 +81,10 @@ There is an example `docker-compose.yml` available in the [examples folder](http
     [jwilder/nginx-proxy](https://github.com/jwilder/nginx-proxy)
     - if it is a comma-seperated list, the first value is used
   - `SERVERNAME` - use this to explicitly set httpd's `ServerName`-directive
-    - if none of these both variables are given, the `/etc/hostname` will be used
-  - `BASE_URL` - explicitly set the `base_url` configuration variable for *Drupal*
+    - if none of these both variables are given, the `/etc/hostname` will be
+      used
+  - `BASE_URL` - explicitly set the `base_url` configuration variable for
+    *Drupal*
     - trailing slashes are not allowed
   - `BASE_URL_PROTO` (default: `https://`) - if `BASE_URL` is derived from
     `VIRTUAL_HOST`, this will be prefixed as protocol
@@ -90,11 +92,10 @@ There is an example `docker-compose.yml` available in the [examples folder](http
     to control maximum upload sizes
   - `MEMORY_LIMIT` (default: `64M`) - sets the [`memory_limit`](http://php.net/manual/en/ini.core.php#ini.memory-limit)
      for the *PHP*-interpreter
-  - `DRUPAL_ADMIN_PASSWORD` - sets the default administrator password. The
-    default admin user is `admin`, and the default password is `changeme`.
-    Changing this variable on an existing installation, or subsequent restarts
-    of linked containers has no effect.
-  - `DRUPAL_ADMIN_ACCOUNT_NAME` (default: `admin`) - sets the default administrator account name.
+  - `ADMIN_USER` (default: `admin`) - sets the administrator account name when
+    creating a new instance
+  - `ADMIN_PASSWORD` - (default: `changeme`) sets the administrator password when
+    creating a new instance.
 
 
 ## Customization

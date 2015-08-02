@@ -14,7 +14,7 @@ function run_scripts () {
 	fi
 }
 
-### auto-configure from environment-variables
+### auto-configure database from environment-variables
 
 if [ -n "$MYSQL_PORT_3306_TCP" ] && [ -n "$POSTGRES_PORT_5432_TCP" ]; then
 	if [ -z "$DB_HOST" ] && [ -z "$DB_DRIVER" ]; then
@@ -54,7 +54,7 @@ if [ -z "$DB_HOST" ]; then
 fi
 
 
-### set configuration-defauls if necessary and set driver-specific statements
+### set database configuration defaults if necessary
 
 : ${DB_DRIVER:='mysql'}
 : ${DB_NAME:='drupal'}
@@ -80,6 +80,12 @@ if [ -z "$DB_PASS" ]; then
 	echo >&2 "  (Also of interest might be DB_USER and DB_NAME.)"
 	exit 1
 fi
+
+
+### other defaults
+
+: ${ADMIN_USER:='admin'}  # DO NOT export!
+: ${ADMIN_PASSWORD:='changeme'}  # DO NOT export!
 
 
 ### store database-configuration
@@ -122,13 +128,7 @@ fi
 
 ### Initial setup if database doesn't exist
 
-if [[ $DB_DRIVER == "mysql" ]]; then
-	drush sql-query "SHOW DATABASES LIKE '${DB_NAME}';" > /dev/null || TABLE_EXISTS=$?
-elif [[ $DB_DRIVER == "pgsql" ]]; then
-	drush sql-query '\l' > /dev/null || TABLE_EXISTS=$?
-fi
-
-if [[ $TABLE_EXISTS -ne 0 ]]; then
+if ! drush pm-list > /dev/null 2>&1; then
 	run_scripts setup
 	echo "=> Done installing site!"
 	if [ $EXTRA_SETUP_SCRIPT ]; then
@@ -144,6 +144,9 @@ fi
 ###
 
 run_scripts pre-launch
+
+unset ADMIN_USER
+unset ADMIN_PASSWORD
 
 exec apache2-foreground
 
