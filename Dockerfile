@@ -32,8 +32,8 @@ RUN apt-get -q update \
  && pecl install uploadprogress
 
 # Download Drupal from ftp.drupal.org
-ENV DRUPAL_VERSION=7.44
-ENV DRUPAL_TARBALL_MD5=965ab5fe5457625ec8c18e5c1c455008
+ENV DRUPAL_VERSION=7.50
+ENV DRUPAL_TARBALL_MD5=f23905b0248d76f0fc8316692cd64753
 WORKDIR /var/www
 RUN rm -R html \
  && curl -OsS https://ftp.drupal.org/files/projects/drupal-${DRUPAL_VERSION}.tar.gz \
